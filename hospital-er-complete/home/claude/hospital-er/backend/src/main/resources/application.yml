@@ -1,0 +1,72 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: hospital-er-system
+
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521/XEPDB1}
+    username: ${DB_USER:eruser}
+    password: ${DB_PASS:ErPass#2024}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      pool-name: ErHikariPool
+      maximum-pool-size: 25
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: ERUSER
+        jdbc:
+          batch_size: 30
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    default-schema: ERUSER
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+# ── ER System Threading Config ─────────────────────────────────────────────────
+er:
+  threads:
+    triage-workers: 4          # threads processing patient intake queue
+    doctor-pool-size: 8        # concurrent doctor assignment workers
+    lab-pool-size: 6           # async lab result processors
+    vital-monitor-size: 3      # scheduled vital sign checkers
+    alert-pool-size: 2         # critical alert broadcasters
+  queues:
+    triage-capacity: 500       # max patients in triage queue
+    lab-capacity: 1000         # max pending lab requests
+  timings:
+    vital-check-interval-ms: 3000   # check vitals every 3 seconds
+    bed-release-check-ms: 10000     # check for available beds every 10s
+    stats-broadcast-ms: 2000        # broadcast stats every 2s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,threaddump
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

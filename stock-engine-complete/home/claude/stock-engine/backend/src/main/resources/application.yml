@@ -1,0 +1,77 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: stock-order-engine
+
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521/XEPDB1}
+    username: ${DB_USER:stockuser}
+    password: ${DB_PASS:StockPass#2024}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      pool-name: StockEnginePool
+      maximum-pool-size: 30          # matches thread pool sizes
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: STOCKUSER
+        format_sql: true
+        jdbc:
+          batch_size: 50             # batch inserts for trade records
+          order_inserts: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    default-schema: STOCKUSER
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+# ── Thread Pool Configuration ──────────────────────────────────────────────────
+engine:
+  threads:
+    matching-pool-size: 8            # one thread per symbol group
+    settlement-pool-size: 4          # DB write pool
+    market-data-pool-size: 3         # market feed workers
+    notification-pool-size: 2        # WebSocket broadcast
+    scheduled-pool-size: 4           # periodic tasks
+  queues:
+    order-queue-capacity: 100000     # incoming order buffer
+    trade-queue-capacity: 50000      # settlement queue
+    market-data-capacity: 10000      # price feed queue
+  risk:
+    max-order-value: 10000000        # ₹1 crore per order
+    max-daily-orders: 10000          # per account
+    circuit-breaker-pct: 20.0        # halt if price moves >20%
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,threaddump,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

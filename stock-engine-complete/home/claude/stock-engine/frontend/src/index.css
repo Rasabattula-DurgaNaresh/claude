@@ -1,0 +1,85 @@
+:root {
+  --bg:        #080c10;
+  --surface:   #0d1219;
+  --panel:     #111820;
+  --border:    rgba(255,255,255,0.06);
+  --border-hi: rgba(0,212,135,0.25);
+  --green:     #00d487;
+  --green-dim: rgba(0,212,135,0.12);
+  --red:       #ff4d6b;
+  --red-dim:   rgba(255,77,107,0.12);
+  --amber:     #f5a623;
+  --amber-dim: rgba(245,166,35,0.12);
+  --blue:      #4a9eff;
+  --blue-dim:  rgba(74,158,255,0.12);
+  --text:      #e2eaf3;
+  --muted:     #556070;
+  --mono:      'IBM Plex Mono', monospace;
+  --display:   'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #1e2a35; border-radius: 2px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.55rem 1.1rem; border-radius: 6px; border: none;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em;
+}
+.btn-buy  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,212,135,0.3); }
+.btn-buy:hover  { background: var(--green); color: #000; }
+.btn-sell { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(255,77,107,0.3); }
+.btn-sell:hover { background: var(--red); color: #fff; }
+.btn-ghost{ background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 0.15rem 0.5rem; border-radius: 4px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.badge-buy    { background: var(--green-dim); color: var(--green); }
+.badge-sell   { background: var(--red-dim);   color: var(--red); }
+.badge-open   { background: var(--blue-dim);  color: var(--blue); }
+.badge-filled { background: var(--green-dim); color: var(--green); }
+.badge-cancelled { background: rgba(255,255,255,0.05); color: var(--muted); }
+.badge-pending   { background: var(--amber-dim); color: var(--amber); }
+
+.pos  { color: var(--green); }
+.neg  { color: var(--red); }
+.muted{ color: var(--muted); }
+
+input, select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.55rem 0.75rem;
+  color: var(--text); font-family: var(--mono);
+  font-size: 12px; outline: none; width: 100%;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus { border-color: var(--green); }
+input::placeholder { color: var(--muted); }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+@keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes flash  { 0%{background:rgba(0,212,135,0.2)} 100%{background:transparent} }
+.fade     { animation: fadeIn 0.3s ease; }
+.blinking { animation: blink 1s ease infinite; }
